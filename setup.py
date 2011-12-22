@@ -1,7 +1,7 @@
 import sys
 import re
 from os.path import abspath, join
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 if sys.version_info[:2] < (2, 5):
     raise Exception('bitarray requires Python 2.5 or greater.')

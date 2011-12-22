@@ -672,6 +672,13 @@ class SpecialMethodTests(unittest.TestCase, Util):
             self.assert_(b is not a)
             self.assertEQUAL(a, b)
 
+    def test_filter(self):
+        f = bitarray('11001')
+        fixture = iter("abcde")
+        expected = "abe"
+        actual = "".join(f.filter(fixture))
+        self.assertEqual(actual, expected)
+        
 
 tests.append(SpecialMethodTests)
 

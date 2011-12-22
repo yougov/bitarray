@@ -1258,6 +1258,42 @@ the remaining bits (1..7) are set to 0.");
 
 
 static PyObject *
+bitarray_filter(bitarrayobject *self, PyObject *iterable)
+{
+    PyObject *it = PyObject_GetIter(iterable);
+    PyObject *result;
+    long i;
+    PyObject *item;
+    if (it == NULL)
+    {
+        Py_DECREF(it);
+        return NULL;
+    }
+    if((result = PyList_New(0)) == NULL)
+    {
+        return NULL;
+    }
+    i = 0;
+    while ((item = PyIter_Next(it)))
+    {
+        if (GETBIT(self, i))
+        {
+            PyList_Append(result, item);
+        }
+        Py_DECREF(item);
+        i++;
+    }
+    Py_DECREF(it);
+    return result;
+}
+
+PyDoc_STRVAR(filter_doc,
+"filter(iterable)\n\
+\n\
+Return a list of items in iterable that have a corresponding\n\
+on-bit in the bitarray. ");
+
+static PyObject *
 bitarray_tolist(bitarrayobject *self)
 {
     PyObject *list;
@@ -1931,6 +1967,8 @@ bitarray_methods[] = {
      tofile_doc},
     {"tolist",       (PyCFunction) bitarray_tolist,      METH_NOARGS,
      tolist_doc},
+    {"filter",       (PyCFunction) bitarray_filter,      METH_O,
+     filter_doc},
     {"tostring",     (PyCFunction) bitarray_tostring,    METH_NOARGS,
      tostring_doc},
     {"to01",         (PyCFunction) bitarray_to01,        METH_NOARGS,
