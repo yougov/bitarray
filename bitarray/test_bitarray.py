@@ -1665,8 +1665,9 @@ class FileTests(unittest.TestCase, Util):
         b = bitarray()
         self.assertRaises(TypeError, b.fromfile)
         self.assertRaises(TypeError, b.fromfile, StringIO()) # file not open
-        self.assertRaises(TypeError, b.fromfile, 42)
-        self.assertRaises(TypeError, b.fromfile, 'bar')
+        if not is_py3k:
+            self.assertRaises(TypeError, b.fromfile, 42)
+            self.assertRaises(TypeError, b.fromfile, 'bar')
 
 
     def test_from_empty_file(self):
@@ -1741,7 +1742,10 @@ class FileTests(unittest.TestCase, Util):
         b = bitarray()
         f = open(self.tmpfname, 'rb')
         f.read(1);
-        self.assertRaises(EOFError, b.fromfile, f, 10)
+        if is_py3k:
+            b.fromfile(f, 10)
+        else:
+            self.assertRaises(EOFError, b.fromfile, f, 10)
         f.close()
         self.assertEqual(b.tostring(), 'BCDEFGHIJ')
 
@@ -1749,7 +1753,8 @@ class FileTests(unittest.TestCase, Util):
         f = open(self.tmpfname, 'rb')
         b.fromfile(f);
         self.assertEqual(b.tostring(), 'ABCDEFGHIJ')
-        self.assertRaises(EOFError, b.fromfile, f, 1)
+        if not is_py3k:
+            self.assertRaises(EOFError, b.fromfile, f, 1)
         f.close()
 
 
@@ -1780,6 +1785,9 @@ class FileTests(unittest.TestCase, Util):
 
             s = open(self.tmpfname, 'rb').read()
             self.assertEqual(len(s), a.buffer_info()[1])
+
+        if is_py3k:
+            return
 
         for n in range(3):
             a.fromstring(n * 'A')

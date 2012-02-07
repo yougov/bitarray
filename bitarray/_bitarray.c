@@ -1315,81 +1315,13 @@ PyDoc_STRVAR(sort_doc,
 Sort the bits in the array (in-place).");
 
 
+static PyObject *
+bitarray_fromfile(bitarrayobject *self, PyObject *args)
+{
 #ifdef IS_PY3K
-static PyObject *
-bitarray_fromfile(bitarrayobject *self, PyObject *args)
-{
-    PyObject *f;
-    Py_ssize_t newsize, nbytes = -1;
-    PyObject *reader, *rargs, *result;
-    size_t nread;
-    idx_t t, p;
-
-    if (!PyArg_ParseTuple(args, "O|n:fromfile", &f, &nbytes))
-        return NULL;
-
-    if (nbytes == 0)
-        Py_RETURN_NONE;
-
-    reader = PyObject_GetAttrString(f, "read");
-    if (reader == NULL)
-    {
-        PyErr_SetString(PyExc_TypeError,
-                        "first argument must be an open file");
-        return NULL;
-    }
-    rargs = Py_BuildValue("(n)", nbytes);
-    if (rargs == NULL) {
-        Py_DECREF(reader);
-        return NULL;
-    }
-    result = PyEval_CallObject(reader, rargs);
-    if (result != NULL) {
-        if (!PyBytes_Check(result)) {
-            PyErr_SetString(PyExc_TypeError,
-                            "first argument must be an open file");
-            Py_DECREF(result);
-            Py_DECREF(rargs);
-            Py_DECREF(reader);
-            return NULL;
-        }
-
-        nread = PyBytes_Size(result);
-
-        t = self->nbits;
-        p = setunused(self);
-        self->nbits += p;
-
-        newsize = Py_SIZE(self) + nread;
-
-        if (resize(self, BITS(newsize)) < 0) {
-            Py_DECREF(result);
-            Py_DECREF(rargs);
-            Py_DECREF(reader);
-            return NULL;
-        }
-
-        memcpy(self->ob_item + (Py_SIZE(self) - nread),
-               PyBytes_AS_STRING(result), nread);
-
-        if (nbytes > 0 && nread < (size_t) nbytes) {
-            PyErr_SetString(PyExc_EOFError, "not enough items read");
-            return NULL;
-        }
-        if (delete_n(self, t, p) < 0)
-            return NULL;
-        Py_DECREF(result);
-    }
-
-    Py_DECREF(rargs);
-    Py_DECREF(reader);
-
-    Py_RETURN_NONE;
-}
+    PyErr_SetString(PyExc_NotImplementedError, "not on Py3k");
+    return NULL;
 #else
-static PyObject *
-bitarray_fromfile(bitarrayobject *self, PyObject *args)
-{
     PyObject *f;
     FILE *fp;
     Py_ssize_t newsize, nbytes = -1;
@@ -1446,8 +1378,8 @@ bitarray_fromfile(bitarrayobject *self, PyObject *args)
     if (delete_n(self, t, p) < 0)
         return NULL;
     Py_RETURN_NONE;
-}
 #endif
+}
 
 PyDoc_STRVAR(fromfile_doc,
 "fromfile(f, [n])\n\
@@ -1457,47 +1389,13 @@ interpreted as machine values.  When n is omitted, as many bytes are\n\
 read until EOF is reached.");
 
 
+static PyObject *
+bitarray_tofile(bitarrayobject *self, PyObject *f)
+{
 #ifdef IS_PY3K
-static PyObject *
-bitarray_tofile(bitarrayobject *self, PyObject *f)
-{
-    PyObject *writer, *value, *args, *result;
-
-    if (f == NULL) {
-        PyErr_SetString(PyExc_TypeError, "writeobject with NULL file");
-        return NULL;
-    }
-    writer = PyObject_GetAttrString(f, "write");
-    if (writer == NULL)
-        return NULL;
-    setunused(self);
-    value = PyBytes_FromStringAndSize(self->ob_item, Py_SIZE(self));
-    if (value == NULL) {
-        Py_DECREF(writer);
-        return NULL;
-    }
-    args = PyTuple_Pack(1, value);
-    if (args == NULL) {
-        Py_DECREF(value);
-        Py_DECREF(writer);
-        return NULL;
-    }
-    result = PyEval_CallObject(writer, args);
-    Py_DECREF(args);
-    Py_DECREF(value);
-    Py_DECREF(writer);
-    if (result == NULL)
-    {
-        PyErr_SetString(PyExc_TypeError, "open file expected");
-        return NULL;
-    }
-    Py_DECREF(result);
-    Py_RETURN_NONE;
-}
+    PyErr_SetString(PyExc_NotImplementedError, "not on Py3k");
+    return NULL;
 #else
-static PyObject *
-bitarray_tofile(bitarrayobject *self, PyObject *f)
-{
     FILE *fp;
 
     fp = PyFile_AsFile(f);
@@ -1517,8 +1415,8 @@ bitarray_tofile(bitarrayobject *self, PyObject *f)
         return NULL;
     }
     Py_RETURN_NONE;
-}
 #endif
+}
 
 PyDoc_STRVAR(tofile_doc,
 "tofile(f)\n\

@@ -8,9 +8,11 @@ Please find a description of this package at:
 
 Author: Ilan Schnell
 """
-__version__ = '0.6.1'
+import sys
 
 from ._bitarray import _bitarray, bits2bytes, _sysinfo
+
+__version__ = '0.6.1'
 
 
 def _tree_insert(tree, sym, ba):
@@ -76,6 +78,15 @@ Allowed values are 'big' and 'little' (default is 'big').
 Note that setting the bit endianness only has an effect when accessing the
 machine representation of the bitarray, i.e. when using the methods: tofile,
 fromfile, tobytes, frombytes."""
+
+    if sys.version_info[0] >= 3:
+        def fromfile(self, f, n=None):
+            self.frombytes(f.read(n))
+        fromfile.__doc__ = _bitarray.fromfile.__doc__
+
+        def tofile(self, f):
+            f.write(self.tobytes())
+        tofile.__doc__ = _bitarray.tofile.__doc__
 
     def fromstring(self, string):
         """fromstring(string)
