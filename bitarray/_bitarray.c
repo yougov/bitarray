@@ -74,8 +74,9 @@ typedef struct {
 #endif
     char *ob_item;
     Py_ssize_t allocated;       /* how many bytes allocated */
-    idx_t nbits;                /* length og bitarray */
+    idx_t nbits;                /* length of bitarray */
     int endian;                 /* bit endianness of bitarray */
+    long shash;      /* saved hash; only used by frozenbitarray objects */
     PyObject *weakreflist;      /* list of weak references */
 } bitarrayobject;
 
@@ -196,6 +197,7 @@ newbitarrayobject(PyTypeObject *type, idx_t nbits, int endian)
     Py_SIZE(obj) = nbytes;
     obj->nbits = nbits;
     obj->endian = endian;
+    obj->shash = -1;
     if (nbytes == 0) {
         obj->ob_item = NULL;
     }
@@ -1728,6 +1730,28 @@ bitarray_repr(bitarrayobject *self)
 }
 
 
+static long
+bitarray_hash(bitarrayobject *self)
+{
+    Py_ssize_t len;
+    unsigned char *p;
+    long x;
+
+    if (self->shash != -1)
+        return self->shash;
+    setunused(self);
+    len = Py_SIZE(self);
+    p = (unsigned char *) self->ob_item;
+    x = self->nbits;
+    while (--len >= 0)
+        x = (1000003 * x) ^ *p++;
+    if (x == -1)
+        x = -2;
+    self->shash = x;
+    return x;
+}
+
+
 static PyObject *
 bitarray_insert(bitarrayobject *self, PyObject *args)
 {
@@ -2886,7 +2910,7 @@ static PyTypeObject Bitarraytype = {
     0,                                        /* tp_as_number*/
     0,                                        /* tp_as_sequence */
     0,                                        /* tp_as_mapping */
-    0,                                        /* tp_hash */
+    (hashfunc) bitarray_hash,                 /* tp_hash */
     0,                                        /* tp_call */
     0,                                        /* tp_str */
     PyObject_GenericGetAttr,                  /* tp_getattro */

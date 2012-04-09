@@ -118,6 +118,78 @@ with the corresponding bitarray for each symbols."""
         _check_codedict(codedict)
         self._encode(codedict, iterable)
 
+    def __hash__(self):
+        raise TypeError("unhashable type: 'bitarray'")
+
+
+class frozenbitarray(_bitarray):
+
+    def append(self, item):
+        raise NotImplementedError
+
+    def bytereverse(self):
+        raise NotImplementedError
+
+    def extend(self, arg):
+        raise NotImplementedError
+
+    def fill(self):
+        raise NotImplementedError
+
+    def fromfile(self, n=0):
+        raise NotImplementedError
+
+    def frombytes(self, bytes):
+        raise NotImplementedError
+
+    def insert(self, i, item):
+        raise NotImplementedError
+
+    def invert(self):
+        raise NotImplementedError
+
+    def pack(self, bytes):
+        raise NotImplementedError
+
+    def pop(self, i=0):
+        raise NotImplementedError
+
+    def remove(self, item):
+        raise NotImplementedError
+
+    def reverse(self):
+        raise NotImplementedError
+
+    def setall(self, v):
+        raise NotImplementedError
+
+    def sort(self, reverse=False):
+        raise NotImplementedError
+
+    def __delitem__(self, arg):
+        raise NotImplementedError
+
+    def __setitem__(self, *args):
+        raise NotImplementedError
+
+    def __iadd__(self, other):
+        raise NotImplementedError
+
+    def __imul__(self, num):
+        raise NotImplementedError
+
+    def __iand__(self, other):
+        raise NotImplementedError
+
+    def __ior__(self, other):
+        raise NotImplementedError
+
+    def __ixor__(self, other):
+        raise NotImplementedError
+
+    def __invert__(self, other):
+        raise NotImplementedError
+
 
 def test(verbosity=1, repeat=1):
     """test(verbosity=1, repeat=1) -> TextTestResult
