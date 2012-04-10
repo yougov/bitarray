@@ -127,6 +127,9 @@ class frozenbitarray(_bitarray):
     def __repr__(self):
         return 'frozen' + _bitarray.__repr__(self)
 
+    # the following methods need to be made unavailable,
+    # as they may mutate the object
+
     def append(self, item):
         raise NotImplementedError
 
@@ -134,6 +137,9 @@ class frozenbitarray(_bitarray):
         raise NotImplementedError
 
     def extend(self, arg):
+        raise NotImplementedError
+
+    def _encode(self):
         raise NotImplementedError
 
     def fill(self):
@@ -190,7 +196,7 @@ class frozenbitarray(_bitarray):
     def __ixor__(self, other):
         raise NotImplementedError
 
-    def __invert__(self, other):
+    def __invert__(self):
         raise NotImplementedError
 
 
