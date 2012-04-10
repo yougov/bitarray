@@ -1764,13 +1764,13 @@ bitarray_hash(bitarrayobject *self)
     len = Py_SIZE(self);
     p = (unsigned char *) self->ob_item;
     x = self->nbits;
-    if (self->endian == DEFAULT_ENDIAN) {
+    if (self->endian) {
         while (--len >= 0)
-            x = (1000003 * x) ^ *p++;
+            x = (1000003 * x) ^ (unsigned char) bytereverse_trans[*p++];
     }
     else {
         while (--len >= 0)
-            x = (1000003 * x) ^ (unsigned char) bytereverse_trans[*p++];
+            x = (1000003 * x) ^ *p++;
     }
     if (x == -1)
         x = -2;
