@@ -40,7 +40,7 @@ def _check_codedict(codedict):
     if len(codedict) == 0:
         raise ValueError("prefix code empty")
     for k, v in codedict.items():
-        if not isinstance(v, bitarray):
+        if not isinstance(v, (bitarray, frozenbitarray)):
             raise TypeError("bitarray expected for dictionary value")
         if v.length() == 0:
             raise ValueError("non-empty bitarray expected")
