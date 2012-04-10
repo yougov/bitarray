@@ -119,10 +119,13 @@ with the corresponding bitarray for each symbols."""
         self._encode(codedict, iterable)
 
     def __hash__(self):
-        raise TypeError("unhashable type: 'bitarray'")
+        raise TypeError("unhashable type: 'bitarray.bitarray'")
 
 
 class frozenbitarray(_bitarray):
+
+    def __repr__(self):
+        return 'frozen' + _bitarray.__repr__(self)
 
     def append(self, item):
         raise NotImplementedError
