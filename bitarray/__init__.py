@@ -123,6 +123,10 @@ with the corresponding bitarray for each symbols."""
 
 
 class frozenbitarray(_bitarray):
+    """bitarray([initial], [endian=string])
+
+Creates a frozenbitarray object, which is very much like the bitarray object,
+except that it is immutable, and therefore hashable."""
 
     def __repr__(self):
         return 'frozen' + _bitarray.__repr__(self)
